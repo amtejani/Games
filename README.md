@@ -1,5 +1,5 @@
-## KorGE samples
+## Games
 
 ```bash
-./gradlew :sample-box2d:runJvm
+./gradlew :Nonogram:runJvm
 ```

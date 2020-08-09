@@ -14,4 +14,4 @@ You can check an empty position with the left mouse button
 and mark a position as a possible mine with the right mouse button (or middle click, shift + left click, or control + left click).
 You can click and drag to perform any of these operations.
 
-[Play here](https://amtejani.github.io/Number-Game/build/web/)
+[Play here](https://amtejani.github.io/Games/Nonogram/build/web/)
