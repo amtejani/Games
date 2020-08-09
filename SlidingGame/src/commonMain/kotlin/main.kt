@@ -4,7 +4,13 @@ import com.soywiz.korge.ui.textButton
 import com.soywiz.korge.view.*
 import com.soywiz.korim.color.Colors
 import com.soywiz.korio.async.AsyncSignal
+import com.soywiz.korio.async.launch
 import com.soywiz.korio.lang.Closeable
+import com.soywiz.korma.geom.PointInt
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlin.math.min
 
 suspend fun main() = Korge(width = 1600, height = 900, bgcolor = Colors["#2b2b2b"]) {
@@ -13,6 +19,19 @@ suspend fun main() = Korge(width = 1600, height = 900, bgcolor = Colors["#2b2b2b
 	var gameOverText: Text? = null
 	var gameOverCloseable: Closeable? = null
 	val newGame = AsyncSignal<Unit>()
+	val channel = Channel<List<Pair<PointInt, Direction>>>()
+	launch {
+		channel.consumeAsFlow()
+			.buffer()
+			.collect {
+				it.forEach { i ->
+					val cell = board?.get(i.first)
+					if (cell is Board.FragmentCell) {
+						cell.move(i.second, cell.space)
+					}
+				}
+			}
+	}
 	var boardWidth = 4
 	var boardHeight = 4
 
@@ -58,7 +77,7 @@ suspend fun main() = Korge(width = 1600, height = 900, bgcolor = Colors["#2b2b2b
 		board = Board(boardWidth, boardHeight).also {
 			position(100, 100)
 			val blockSize = min(views.virtualWidth / (boardWidth * 1.1) * 4 / 5, views.virtualHeight / (boardHeight * 1.1) / 2)
-			boardContainer = createBoard(it, blockSize)
+			boardContainer = createBoard(it, blockSize, channel)
 			boardContainer?.alignTopToBottomOf(buttonContainer, 20.0)
 			gameOverCloseable = it.gameOver {
 				gameOverText = text("Game Over") {
@@ -75,7 +94,7 @@ suspend fun main() = Korge(width = 1600, height = 900, bgcolor = Colors["#2b2b2b
  * Generate [Board] UI.
  * Show the empty counts next to the rows/columns
  */
-fun Container.createBoard(board: Board, blockSize: Double = 100.0) =
+fun Container.createBoard(board: Board, blockSize: Double = 100.0, channel: Channel<List<Pair<PointInt, Direction>>>) =
 	container {
 		val size = blockSize.coerceAtMost(100.0)
 		val padding = size / 10
@@ -88,12 +107,12 @@ fun Container.createBoard(board: Board, blockSize: Double = 100.0) =
 						text(cell.index.toString(), textSize = (size / 2).coerceAtMost(16.0), color = Colors.BLACK) {
 							position(5, 5)
 						}
-						cell.init(this, board, size * 1.1)
+						cell.init(this, board, size * 1.1, channel)
 					}
 				}
 			}
 		}
-		board.init(this, size * 1.1)
+		board.init(this, channel)
 	}
 
 fun Container.configuration(
