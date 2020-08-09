@@ -1,8 +1,8 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd)
-    define(['exports', 'kotlin', 'korma-root-korma', 'kds-root-kds', 'korio-root-korio', 'korge-root-korge', 'klock-root-klock', 'korim-root-korim'], factory);
+    define(['exports', 'kotlin', 'korma-root-korma', 'kds-root-kds', 'korio-root-korio', 'korge-root-korge', 'klock-root-klock', 'korim-root-korim', 'kotlinx-coroutines-core'], factory);
   else if (typeof exports === 'object')
-    factory(module.exports, require('kotlin'), require('korma-root-korma'), require('kds-root-kds'), require('korio-root-korio'), require('korge-root-korge'), require('klock-root-klock'), require('korim-root-korim'));
+    factory(module.exports, require('kotlin'), require('korma-root-korma'), require('kds-root-kds'), require('korio-root-korio'), require('korge-root-korge'), require('klock-root-klock'), require('korim-root-korim'), require('kotlinx-coroutines-core'));
   else {
     if (typeof kotlin === 'undefined') {
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'kotlin' was not found. Please, check whether 'kotlin' is loaded prior to 'Games-SlidingGame'.");
@@ -18,9 +18,11 @@
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'klock-root-klock' was not found. Please, check whether 'klock-root-klock' is loaded prior to 'Games-SlidingGame'.");
     }if (typeof this['korim-root-korim'] === 'undefined') {
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'korim-root-korim' was not found. Please, check whether 'korim-root-korim' is loaded prior to 'Games-SlidingGame'.");
-    }root['Games-SlidingGame'] = factory(typeof this['Games-SlidingGame'] === 'undefined' ? {} : this['Games-SlidingGame'], kotlin, this['korma-root-korma'], this['kds-root-kds'], this['korio-root-korio'], this['korge-root-korge'], this['klock-root-klock'], this['korim-root-korim']);
+    }if (typeof this['kotlinx-coroutines-core'] === 'undefined') {
+      throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'kotlinx-coroutines-core' was not found. Please, check whether 'kotlinx-coroutines-core' is loaded prior to 'Games-SlidingGame'.");
+    }root['Games-SlidingGame'] = factory(typeof this['Games-SlidingGame'] === 'undefined' ? {} : this['Games-SlidingGame'], kotlin, this['korma-root-korma'], this['kds-root-kds'], this['korio-root-korio'], this['korge-root-korge'], this['klock-root-klock'], this['korim-root-korim'], this['kotlinx-coroutines-core']);
   }
-}(this, function (_, Kotlin, $module$korma_root_korma, $module$kds_root_kds, $module$korio_root_korio, $module$korge_root_korge, $module$klock_root_klock, $module$korim_root_korim) {
+}(this, function (_, Kotlin, $module$korma_root_korma, $module$kds_root_kds, $module$korio_root_korio, $module$korge_root_korge, $module$klock_root_klock, $module$korim_root_korim, $module$kotlinx_coroutines_core) {
   'use strict';
   var $$importsForInline$$ = _.$$importsForInline$$ || (_.$$importsForInline$$ = {});
   var Pair = Kotlin.kotlin.Pair;
@@ -48,14 +50,14 @@
   var drop = Kotlin.kotlin.collections.drop_ba2ldo$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
+  var listOf = Kotlin.kotlin.collections.listOf_mh5how$;
   var getPropertyCallableRef = Kotlin.getPropertyCallableRef;
   var Easing = $module$korma_root_korma.com.soywiz.korma.interpolation.Easing;
   var tween = $module$korge_root_korge.com.soywiz.korge.tween.tween_t8t7it$;
-  var launchImmediately = $module$korio_root_korio.com.soywiz.korio.async.launchImmediately_ykkwzu$;
   var Any = Object;
   var setExtra = $module$kds_root_kds.com.soywiz.kds.setExtra_46skc7$;
   var get_mouse = $module$korge_root_korge.com.soywiz.korge.input.get_mouse_gohfi1$;
-  var launchImmediately_0 = $module$korge_root_korge.$$importsForInline$$['korio-root-korio'].com.soywiz.korio.async.launchImmediately_ykkwzu$;
+  var launchImmediately = $module$korge_root_korge.$$importsForInline$$['korio-root-korio'].com.soywiz.korio.async.launchImmediately_ykkwzu$;
   var get_keys = $module$korge_root_korge.com.soywiz.korge.input.get_keys_gohfi1$;
   var _interpolate = $module$korge_root_korge.com.soywiz.korge.tween._interpolate_yvo9jy$;
   var getCallableRef = Kotlin.getCallableRef;
@@ -64,6 +66,10 @@
   var korge = $module$korge_root_korge.com.soywiz.korge;
   var color = $module$korim_root_korim.com.soywiz.korim.color;
   var AsyncSignal = $module$korio_root_korio.com.soywiz.korio.async.AsyncSignal;
+  var Channel = $module$kotlinx_coroutines_core.kotlinx.coroutines.channels.Channel_ww73n8$;
+  var consumeAsFlow = $module$kotlinx_coroutines_core.kotlinx.coroutines.flow.consumeAsFlow_6u4434$;
+  var buffer = $module$kotlinx_coroutines_core.kotlinx.coroutines.flow.buffer_9ty2u6$;
+  var launch = $module$korio_root_korio.com.soywiz.korio.async.launch_hilpzi$;
   var position = $module$korge_root_korge.com.soywiz.korge.view.position_ajix5r$;
   var alignLeftToRightOf = $module$korge_root_korge.com.soywiz.korge.view.alignLeftToRightOf_qcv975$;
   var IntRange = Kotlin.kotlin.ranges.IntRange;
@@ -73,6 +79,7 @@
   var coerceAtMost = Kotlin.kotlin.ranges.coerceAtMost_38ydlf$;
   var coerceIn = Kotlin.kotlin.ranges.coerceIn_nayhkp$;
   var internal = Kotlin.kotlin.coroutines.js.internal;
+  var FlowCollector = $module$kotlinx_coroutines_core.kotlinx.coroutines.flow.FlowCollector;
   var get_defaultUISkin = $module$korge_root_korge.com.soywiz.korge.ui.get_defaultUISkin_gohfi1$;
   var get_defaultUIFont = $module$korge_root_korge.com.soywiz.korge.ui.get_defaultUIFont_gohfi1$;
   var TextButton_init = $module$korge_root_korge.com.soywiz.korge.ui.TextButton;
@@ -384,7 +391,7 @@
   }
   function doMouseEvent$lambda$lambda(closure$mouse, closure$handler) {
     return function (it) {
-      launchImmediately_0(closure$mouse.coroutineContext, doMouseEvent$lambda$lambda$lambda(closure$handler, it));
+      launchImmediately(closure$mouse.coroutineContext, doMouseEvent$lambda$lambda$lambda(closure$handler, it));
       return Unit;
     };
   }
@@ -415,17 +422,42 @@
     var tmp$, tmp$_0;
     setExtra($receiver, (tmp$ = view.name) != null ? tmp$ : view_metadata.callableName, (tmp$_0 = view_0) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE());
   }
-  function Coroutine$init$lambda(closure$parent_0, this$init_0, closure$space_0, it_0, continuation_0) {
+  function space$lambda() {
+    return 0.0;
+  }
+  var space;
+  var space_metadata = new PropertyMetadata('space');
+  function get_space($receiver) {
+    var getValue_jvq2vc$result;
+    getValue_jvq2vc$break: do {
+      var tmp$, tmp$_0, tmp$_1, tmp$_2;
+      tmp$_1 = $receiver.extra;
+      tmp$_0 = (tmp$ = space.name) != null ? tmp$ : space_metadata.callableName;
+      var res = (tmp$_2 = tmp$_1 != null ? tmp$_1.get_11rb$(tmp$_0) : null) == null || Kotlin.isType(tmp$_2, Any) ? tmp$_2 : throwCCE();
+      if (res == null) {
+        var r = space.defaultGen();
+        var tmp$_3, tmp$_4;
+        setExtra($receiver, (tmp$_3 = space.name) != null ? tmp$_3 : space_metadata.callableName, (tmp$_4 = r) == null || Kotlin.isType(tmp$_4, Any) ? tmp$_4 : throwCCE());
+        getValue_jvq2vc$result = r;
+        break getValue_jvq2vc$break;
+      }getValue_jvq2vc$result = res;
+    }
+     while (false);
+    return getValue_jvq2vc$result;
+  }
+  function set_space($receiver, space_0) {
+    var tmp$, tmp$_0;
+    setExtra($receiver, (tmp$ = space.name) != null ? tmp$ : space_metadata.callableName, (tmp$_0 = space_0) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE());
+  }
+  function Coroutine$init$lambda(closure$parent_0, this$init_0, closure$channel_0, it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
     this.local$closure$parent = closure$parent_0;
     this.local$this$init = this$init_0;
-    this.local$closure$space = closure$space_0;
+    this.local$closure$channel = closure$channel_0;
     this.local$tmp$ = void 0;
     this.local$emptyPos = void 0;
     this.local$pos = void 0;
-    this.local$dir = void 0;
-    this.local$tmp$_1 = void 0;
   }
   Coroutine$init$lambda.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
@@ -453,8 +485,8 @@
           case 1:
             throw this.exception_0;
           case 2:
-            this.local$dir = this.local$tmp$;
-            if (get_isVertical(this.local$dir)) {
+            var dir = this.local$tmp$;
+            if (get_isVertical(dir)) {
               var from = this.local$emptyPos.y;
               var to = this.local$pos.y;
               var $receiver = countTo(from, to);
@@ -480,37 +512,23 @@
               tmp$ = destination_0;
             }
 
-            this.local$tmp$_1 = drop(tmp$, 1).iterator();
-            this.state_0 = 3;
-            continue;
-          case 3:
-            if (!this.local$tmp$_1.hasNext()) {
-              this.state_0 = 6;
-              continue;
-            }
-            var element = this.local$tmp$_1.next();
-            var closure$parent = this.local$closure$parent;
-            var closure$space = this.local$closure$space;
-            var cell = closure$parent.get_mlm8fl$(element);
-            if (Kotlin.isType(cell, Board$FragmentCell)) {
-              this.state_0 = 4;
-              this.result_0 = move(cell, this.local$dir, closure$space, this);
-              if (this.result_0 === COROUTINE_SUSPENDED)
-                return COROUTINE_SUSPENDED;
-              continue;
-            } else {
-              this.state_0 = 5;
-              continue;
+            var $receiver_1 = drop(tmp$, 1);
+            var destination_1 = ArrayList_init(collectionSizeOrDefault($receiver_1, 10));
+            var tmp$_2;
+            tmp$_2 = $receiver_1.iterator();
+            while (tmp$_2.hasNext()) {
+              var item_1 = tmp$_2.next();
+              destination_1.add_11rb$(new Pair(item_1, dir));
             }
 
-          case 4:
-            this.state_0 = 5;
-            continue;
-          case 5:
+            var cellsToMove = destination_1;
             this.state_0 = 3;
+            this.result_0 = this.local$closure$channel.send_11rb$(cellsToMove, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
             continue;
-          case 6:
-            return Unit;
+          case 3:
+            return this.result_0;
           default:this.state_0 = 1;
             throw new Error('State Machine Unreachable execution');
         }
@@ -525,29 +543,30 @@
       }
      while (true);
   };
-  function init$lambda(closure$parent_0, this$init_0, closure$space_0) {
+  function init$lambda(closure$parent_0, this$init_0, closure$channel_0) {
     return function (it_0, continuation_0, suspended) {
-      var instance = new Coroutine$init$lambda(closure$parent_0, this$init_0, closure$space_0, it_0, continuation_0);
+      var instance = new Coroutine$init$lambda(closure$parent_0, this$init_0, closure$channel_0, it_0, continuation_0);
       if (suspended)
         return instance;
       else
         return instance.doResume(null);
     };
   }
-  function init($receiver, view, parent, space) {
+  function init($receiver, view, parent, space, channel) {
     set_view($receiver, view);
+    set_space($receiver, space);
     var prop = getPropertyCallableRef('click', 1, function ($receiver_0) {
       return $receiver_0.click;
     });
     var tmp$;
     if ((tmp$ = view != null ? get_mouse(view) : null) != null) {
-      prop.get(tmp$).add_qlkmfe$(doMouseEvent$lambda$lambda(tmp$, init$lambda(parent, $receiver, space)));
+      prop.get(tmp$).add_qlkmfe$(doMouseEvent$lambda$lambda(tmp$, init$lambda(parent, $receiver, channel)));
     }}
-  function Coroutine$init$lambda_0(this$init_0, closure$space_0, event_0, continuation_0) {
+  function Coroutine$init$lambda_0(this$init_0, closure$channel_0, event_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
     this.local$this$init = this$init_0;
-    this.local$closure$space = closure$space_0;
+    this.local$closure$channel = closure$channel_0;
     this.local$tmp$ = void 0;
     this.local$event = event_0;
   }
@@ -566,45 +585,35 @@
             var tmp$;
             if ((tmp$ = get_direction(this.local$event.key)) != null) {
               var this$init = this.local$this$init;
-              var closure$space = this.local$closure$space;
-              var tmp$_0, tmp$_1;
+              var closure$channel = this.local$closure$channel;
               var cellPos = plus(this$init.emptyPos, tmp$.diff);
-              if (this$init.board.inside_vux9f0$(cellPos.x, cellPos.y)) {
-                if ((tmp$_1 = Kotlin.isType(tmp$_0 = this$init.get_mlm8fl$(cellPos), Board$FragmentCell) ? tmp$_0 : null) != null) {
-                  this.state_0 = 2;
-                  this.result_0 = move(tmp$_1, tmp$.inv(), closure$space, this);
-                  if (this.result_0 === COROUTINE_SUSPENDED)
-                    return COROUTINE_SUSPENDED;
-                  continue;
-                } else {
-                  this.result_0 = null;
-                  this.state_0 = 3;
-                  continue;
-                }
+              if (this$init.board.inside_vux9f0$(cellPos.x, cellPos.y) && Kotlin.isType(this$init.get_mlm8fl$(cellPos), Board$FragmentCell)) {
+                var cellsToMove = listOf(new Pair(cellPos, tmp$.inv()));
+                this.state_0 = 2;
+                this.result_0 = closure$channel.send_11rb$(cellsToMove, this);
+                if (this.result_0 === COROUTINE_SUSPENDED)
+                  return COROUTINE_SUSPENDED;
+                continue;
               } else {
-                this.state_0 = 4;
+                this.state_0 = 3;
                 continue;
               }
             } else {
               this.local$tmp$ = null;
-              this.state_0 = 5;
+              this.state_0 = 4;
               continue;
             }
 
           case 1:
             throw this.exception_0;
           case 2:
-            this.result_0 = Unit;
             this.state_0 = 3;
             continue;
           case 3:
+            this.local$tmp$ = Unit;
             this.state_0 = 4;
             continue;
           case 4:
-            this.local$tmp$ = Unit;
-            this.state_0 = 5;
-            continue;
-          case 5:
             return this.local$tmp$;
           default:this.state_0 = 1;
             throw new Error('State Machine Unreachable execution');
@@ -620,46 +629,46 @@
       }
      while (true);
   };
-  function init$lambda_0(this$init_0, closure$space_0) {
+  function init$lambda_0(this$init_0, closure$channel_0) {
     return function (event_0, continuation_0, suspended) {
-      var instance = new Coroutine$init$lambda_0(this$init_0, closure$space_0, event_0, continuation_0);
+      var instance = new Coroutine$init$lambda_0(this$init_0, closure$channel_0, event_0, continuation_0);
       if (suspended)
         return instance;
       else
         return instance.doResume(null);
     };
   }
-  function init_0($receiver_0, view, space) {
+  function init_0($receiver_0, view, channel) {
     var prop = getPropertyCallableRef('onKeyUp', 1, function ($receiver) {
       return $receiver.onKeyUp;
     });
     var tmp$;
     if ((tmp$ = view != null ? get_keys(view) : null) != null) {
-      prop.get(tmp$).add_25kf2w$(init$lambda_0($receiver_0, space));
+      prop.get(tmp$).add_25kf2w$(init$lambda_0($receiver_0, channel));
     }}
-  function Coroutine$move$lambda(closure$direction_0, this$move_0, closure$space_0, continuation_0) {
+  function Coroutine$move($receiver_0, direction_0, space_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
-    this.local$closure$direction = closure$direction_0;
-    this.local$this$move = this$move_0;
-    this.local$closure$space = closure$space_0;
     this.local$tmp$ = void 0;
+    this.local$$receiver = $receiver_0;
+    this.local$direction = direction_0;
+    this.local$space = space_0;
   }
-  Coroutine$move$lambda.$metadata$ = {
+  Coroutine$move.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
     simpleName: null,
     interfaces: [CoroutineImpl]
   };
-  Coroutine$move$lambda.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$move$lambda.prototype.constructor = Coroutine$move$lambda;
-  Coroutine$move$lambda.prototype.doResume = function () {
+  Coroutine$move.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$move.prototype.constructor = Coroutine$move;
+  Coroutine$move.prototype.doResume = function () {
     do
       try {
         switch (this.state_0) {
           case 0:
             var tmp$, tmp$_0, tmp$_1, tmp$_2;
-            if (this.local$this$move.move_h80bq7$(this.local$closure$direction)) {
-              this.local$tmp$ = get_view(this.local$this$move);
+            if (this.local$$receiver.move_h80bq7$(this.local$direction)) {
+              this.local$tmp$ = get_view(this.local$$receiver);
               if (this.local$tmp$ == null) {
                 return;
               } else {
@@ -679,14 +688,14 @@
               return $receiver.x;
             }.bind(null, view), function ($receiver, value) {
               $receiver.x = value;
-            }.bind(null, view)), view.x, view.x + this.local$closure$space * this.local$closure$direction.diff.first, getCallableRef('_interpolate', function (ratio, l, r) {
+            }.bind(null, view)), view.x, view.x + this.local$space * this.local$direction.diff.first, getCallableRef('_interpolate', function (ratio, l, r) {
               return _interpolate(ratio, l, r);
             }), true);
             tmp$_0 = new V2_init(getPropertyCallableRef('y', 0, function ($receiver) {
               return $receiver.y;
             }.bind(null, view), function ($receiver, value) {
               $receiver.y = value;
-            }.bind(null, view)), view.y, view.y + this.local$closure$space * this.local$closure$direction.diff.second, getCallableRef('_interpolate', function (ratio, l, r) {
+            }.bind(null, view)), view.y, view.y + this.local$space * this.local$direction.diff.second, getCallableRef('_interpolate', function (ratio, l, r) {
               return _interpolate(ratio, l, r);
             }), true);
             tmp$_1 = Easing.Companion.EASE_IN_OUT;
@@ -697,9 +706,10 @@
               return COROUTINE_SUSPENDED;
             continue;
           case 3:
-            return Unit;
+            this.state_0 = 4;
+            continue;
           case 4:
-            return Unit;
+            return;
           default:this.state_0 = 1;
             throw new Error('State Machine Unreachable execution');
         }
@@ -714,17 +724,12 @@
       }
      while (true);
   };
-  function move$lambda(closure$direction_0, this$move_0, closure$space_0) {
-    return function (continuation_0, suspended) {
-      var instance = new Coroutine$move$lambda(closure$direction_0, this$move_0, closure$space_0, continuation_0);
-      if (suspended)
-        return instance;
-      else
-        return instance.doResume(null);
-    };
-  }
-  function move($receiver, direction, space, continuation) {
-    launchImmediately(continuation.context, move$lambda(direction, $receiver, space));
+  function move($receiver_0, direction_0, space_0, continuation_0, suspended) {
+    var instance = new Coroutine$move($receiver_0, direction_0, space_0, continuation_0);
+    if (suspended)
+      return instance;
+    else
+      return instance.doResume(null);
   }
   function get_direction($receiver) {
     switch ($receiver.name) {
@@ -739,6 +744,13 @@
       default:return null;
     }
   }
+  function collect$ObjectLiteral(closure$action) {
+    this.closure$action = closure$action;
+  }
+  collect$ObjectLiteral.prototype.emit_11rb$ = function (value, continuation) {
+    return this.closure$action(value, continuation);
+  };
+  collect$ObjectLiteral.$metadata$ = {kind: Kind_CLASS, interfaces: [FlowCollector]};
   function Coroutine$doMouseEvent$lambda$lambda$lambda_0(closure$handler_0, closure$it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
@@ -787,7 +799,7 @@
   }
   function doMouseEvent$lambda$lambda_0(closure$mouse, closure$handler) {
     return function (it) {
-      launchImmediately_0(closure$mouse.coroutineContext, doMouseEvent$lambda$lambda$lambda_0(closure$handler, it));
+      launchImmediately(closure$mouse.coroutineContext, doMouseEvent$lambda$lambda$lambda_0(closure$handler, it));
       return Unit;
     };
   }
@@ -802,6 +814,133 @@
   }
   function solidRect$lambda($receiver) {
     return Unit;
+  }
+  function Coroutine$main$lambda$lambda$lambda(closure$board_0, it_0, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.exceptionState_0 = 1;
+    this.local$closure$board = closure$board_0;
+    this.local$tmp$ = void 0;
+    this.local$it = it_0;
+  }
+  Coroutine$main$lambda$lambda$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$main$lambda$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$main$lambda$lambda$lambda.prototype.constructor = Coroutine$main$lambda$lambda$lambda;
+  Coroutine$main$lambda$lambda$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.local$tmp$ = this.local$it.iterator();
+            this.state_0 = 2;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            if (!this.local$tmp$.hasNext()) {
+              this.state_0 = 5;
+              continue;
+            }
+            var element = this.local$tmp$.next();
+            var tmp$;
+            var cell = (tmp$ = this.local$closure$board.v) != null ? tmp$.get_mlm8fl$(element.first) : null;
+            if (Kotlin.isType(cell, Board$FragmentCell)) {
+              this.state_0 = 3;
+              this.result_0 = move(cell, element.second, get_space(cell), this);
+              if (this.result_0 === COROUTINE_SUSPENDED)
+                return COROUTINE_SUSPENDED;
+              continue;
+            } else {
+              this.state_0 = 4;
+              continue;
+            }
+
+          case 3:
+            this.state_0 = 4;
+            continue;
+          case 4:
+            this.state_0 = 2;
+            continue;
+          case 5:
+            return Unit;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      } catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        } else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function main$lambda$lambda$lambda(closure$board_0) {
+    return function (it_0, continuation_0, suspended) {
+      var instance = new Coroutine$main$lambda$lambda$lambda(closure$board_0, it_0, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function Coroutine$main$lambda$lambda(closure$channel_0, closure$board_0, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.exceptionState_0 = 1;
+    this.local$closure$channel = closure$channel_0;
+    this.local$closure$board = closure$board_0;
+  }
+  Coroutine$main$lambda$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$main$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$main$lambda$lambda.prototype.constructor = Coroutine$main$lambda$lambda;
+  Coroutine$main$lambda$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            var $receiver = buffer(consumeAsFlow(this.local$closure$channel));
+            var action = main$lambda$lambda$lambda(this.local$closure$board);
+            this.state_0 = 2;
+            this.result_0 = $receiver.collect_42ocv1$(new collect$ObjectLiteral(action), this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            this.result_0;
+            return this.result_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      } catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        } else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function main$lambda$lambda(closure$channel_0, closure$board_0) {
+    return function (continuation_0, suspended) {
+      var instance = new Coroutine$main$lambda$lambda(closure$channel_0, closure$board_0, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
   }
   function Coroutine$main$lambda$lambda$lambda$lambda(closure$newGame_0, it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
@@ -892,23 +1031,23 @@
     else
       return instance.doResume(null);
   }
-  function main$lambda$lambda$lambda(it) {
+  function main$lambda$lambda$lambda_0(it) {
     return it.toString();
   }
-  function Coroutine$main$lambda$lambda$lambda(closure$boardWidth_0, it_0, continuation_0) {
+  function Coroutine$main$lambda$lambda$lambda_0(closure$boardWidth_0, it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
     this.local$closure$boardWidth = closure$boardWidth_0;
     this.local$it = it_0;
   }
-  Coroutine$main$lambda$lambda$lambda.$metadata$ = {
+  Coroutine$main$lambda$lambda$lambda_0.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
     simpleName: null,
     interfaces: [CoroutineImpl]
   };
-  Coroutine$main$lambda$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$main$lambda$lambda$lambda.prototype.constructor = Coroutine$main$lambda$lambda$lambda;
-  Coroutine$main$lambda$lambda$lambda.prototype.doResume = function () {
+  Coroutine$main$lambda$lambda$lambda_0.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$main$lambda$lambda$lambda_0.prototype.constructor = Coroutine$main$lambda$lambda$lambda_0;
+  Coroutine$main$lambda$lambda$lambda_0.prototype.doResume = function () {
     do
       try {
         switch (this.state_0) {
@@ -930,38 +1069,38 @@
       }
      while (true);
   };
-  function main$lambda$lambda$lambda_0(closure$boardWidth_0) {
+  function main$lambda$lambda$lambda_1(closure$boardWidth_0) {
     return function (it_0, continuation_0, suspended) {
-      var instance = new Coroutine$main$lambda$lambda$lambda(closure$boardWidth_0, it_0, continuation_0);
+      var instance = new Coroutine$main$lambda$lambda$lambda_0(closure$boardWidth_0, it_0, continuation_0);
       if (suspended)
         return instance;
       else
         return instance.doResume(null);
     };
   }
-  function main$lambda$lambda$lambda_1(closure$newGameButton) {
+  function main$lambda$lambda$lambda_2(closure$newGameButton) {
     return function ($receiver) {
       alignTopToBottomOf($receiver, closure$newGameButton, 20.0);
       return Unit;
     };
   }
-  function main$lambda$lambda$lambda_2(it) {
+  function main$lambda$lambda$lambda_3(it) {
     return it.toString();
   }
-  function Coroutine$main$lambda$lambda$lambda_0(closure$boardHeight_0, it_0, continuation_0) {
+  function Coroutine$main$lambda$lambda$lambda_1(closure$boardHeight_0, it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
     this.local$closure$boardHeight = closure$boardHeight_0;
     this.local$it = it_0;
   }
-  Coroutine$main$lambda$lambda$lambda_0.$metadata$ = {
+  Coroutine$main$lambda$lambda$lambda_1.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
     simpleName: null,
     interfaces: [CoroutineImpl]
   };
-  Coroutine$main$lambda$lambda$lambda_0.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$main$lambda$lambda$lambda_0.prototype.constructor = Coroutine$main$lambda$lambda$lambda_0;
-  Coroutine$main$lambda$lambda$lambda_0.prototype.doResume = function () {
+  Coroutine$main$lambda$lambda$lambda_1.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$main$lambda$lambda$lambda_1.prototype.constructor = Coroutine$main$lambda$lambda$lambda_1;
+  Coroutine$main$lambda$lambda$lambda_1.prototype.doResume = function () {
     do
       try {
         switch (this.state_0) {
@@ -983,16 +1122,16 @@
       }
      while (true);
   };
-  function main$lambda$lambda$lambda_3(closure$boardHeight_0) {
+  function main$lambda$lambda$lambda_4(closure$boardHeight_0) {
     return function (it_0, continuation_0, suspended) {
-      var instance = new Coroutine$main$lambda$lambda$lambda_0(closure$boardHeight_0, it_0, continuation_0);
+      var instance = new Coroutine$main$lambda$lambda$lambda_1(closure$boardHeight_0, it_0, continuation_0);
       if (suspended)
         return instance;
       else
         return instance.doResume(null);
     };
   }
-  function main$lambda$lambda$lambda_4(closure$widthConf) {
+  function main$lambda$lambda$lambda_5(closure$widthConf) {
     return function ($receiver) {
       alignTopToTopOf($receiver, closure$widthConf);
       alignLeftToRightOf($receiver, closure$widthConf, 40.0);
@@ -1014,7 +1153,7 @@
       return Unit;
     };
   }
-  function Coroutine$main$lambda$lambda(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$buttonContainer_0, it_0, continuation_0) {
+  function Coroutine$main$lambda$lambda_0(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$channel_0, closure$buttonContainer_0, it_0, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.exceptionState_0 = 1;
     this.local$closure$boardContainer = closure$boardContainer_0;
@@ -1024,16 +1163,17 @@
     this.local$closure$board = closure$board_0;
     this.local$closure$boardWidth = closure$boardWidth_0;
     this.local$closure$boardHeight = closure$boardHeight_0;
+    this.local$closure$channel = closure$channel_0;
     this.local$closure$buttonContainer = closure$buttonContainer_0;
   }
-  Coroutine$main$lambda$lambda.$metadata$ = {
+  Coroutine$main$lambda$lambda_0.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
     simpleName: null,
     interfaces: [CoroutineImpl]
   };
-  Coroutine$main$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$main$lambda$lambda.prototype.constructor = Coroutine$main$lambda$lambda;
-  Coroutine$main$lambda$lambda.prototype.doResume = function () {
+  Coroutine$main$lambda$lambda_0.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$main$lambda$lambda_0.prototype.constructor = Coroutine$main$lambda$lambda_0;
+  Coroutine$main$lambda$lambda_0.prototype.doResume = function () {
     do
       try {
         switch (this.state_0) {
@@ -1048,6 +1188,7 @@
             var this$ = this.local$this$;
             var closure$boardWidth = this.local$closure$boardWidth;
             var closure$boardHeight = this.local$closure$boardHeight;
+            var closure$channel = this.local$closure$channel;
             var closure$boardContainer = this.local$closure$boardContainer;
             var closure$buttonContainer = this.local$closure$buttonContainer;
             var closure$gameOverText = this.local$closure$gameOverText;
@@ -1057,7 +1198,7 @@
             var a = this$.views.virtualWidth / (closure$boardWidth.v * 1.1) * 4 / 5;
             var b = this$.views.virtualHeight / (closure$boardHeight.v * 1.1) / 2;
             var blockSize = Math_0.min(a, b);
-            closure$boardContainer.v = createBoard(this$, $receiver, blockSize);
+            closure$boardContainer.v = createBoard(this$, $receiver, blockSize, closure$channel);
             (tmp$_2 = closure$boardContainer.v) != null ? alignTopToBottomOf(tmp$_2, closure$buttonContainer, 20.0) : null;
             closure$gameOverCloseable.v = $receiver.gameOver_x41j5s$(main$lambda$lambda$lambda$lambda_1(this$, closure$gameOverText));
             return tmp$_1.v = $receiver, Unit;
@@ -1077,9 +1218,9 @@
       }
      while (true);
   };
-  function main$lambda$lambda(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$buttonContainer_0) {
+  function main$lambda$lambda_0(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$channel_0, closure$buttonContainer_0) {
     return function (it_0, continuation_0, suspended) {
-      var instance = new Coroutine$main$lambda$lambda(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$buttonContainer_0, it_0, continuation_0);
+      var instance = new Coroutine$main$lambda$lambda_0(closure$boardContainer_0, this$_0, closure$gameOverText_0, closure$gameOverCloseable_0, closure$board_0, closure$boardWidth_0, closure$boardHeight_0, closure$channel_0, closure$buttonContainer_0, it_0, continuation_0);
       if (suspended)
         return instance;
       else
@@ -1109,6 +1250,8 @@
             var gameOverText = {v: null};
             var gameOverCloseable = {v: null};
             var newGame = new AsyncSignal();
+            var channel = Channel();
+            launch(this.local$$receiver, main$lambda$lambda(channel, board));
             var boardWidth = {v: 4};
             var boardHeight = {v: 4};
             var $receiver_0_0 = addTo(new Container_init(), this.local$$receiver);
@@ -1131,10 +1274,10 @@
             if ((tmp$_0 = $receiver_0_2 != null ? get_mouse($receiver_0_2) : null) != null) {
               prop_0.get(tmp$_0).add_qlkmfe$(doMouseEvent$lambda$lambda_0(tmp$_0, main$lambda$lambda$lambda$lambda_0));
             }
-            var widthConf = configuration($receiver_0_0, 'Width:', boardWidth.v, main$lambda$lambda$lambda, new IntRange(0, 2147483647), main$lambda$lambda$lambda_0(boardWidth), main$lambda$lambda$lambda_1(newGameButton));
-            configuration($receiver_0_0, 'Height:', boardHeight.v, main$lambda$lambda$lambda_2, new IntRange(0, 2147483647), main$lambda$lambda$lambda_3(boardHeight), main$lambda$lambda$lambda_4(widthConf));
+            var widthConf = configuration($receiver_0_0, 'Width:', boardWidth.v, main$lambda$lambda$lambda_0, new IntRange(0, 2147483647), main$lambda$lambda$lambda_1(boardWidth), main$lambda$lambda$lambda_2(newGameButton));
+            configuration($receiver_0_0, 'Height:', boardHeight.v, main$lambda$lambda$lambda_3, new IntRange(0, 2147483647), main$lambda$lambda$lambda_4(boardHeight), main$lambda$lambda$lambda_5(widthConf));
             var buttonContainer = $receiver_0_0;
-            newGame.invoke_25kf2w$(main$lambda$lambda(boardContainer, this.local$$receiver, gameOverText, gameOverCloseable, board, boardWidth, boardHeight, buttonContainer));
+            newGame.invoke_25kf2w$(main$lambda$lambda_0(boardContainer, this.local$$receiver, gameOverText, gameOverCloseable, board, boardWidth, boardHeight, channel, buttonContainer));
             this.state_0 = 2;
             this.result_0 = newGame.invoke_11rb$(Unit, this);
             if (this.result_0 === COROUTINE_SUSPENDED)
@@ -1168,7 +1311,7 @@
   function main(continuation) {
     return korge.Korge.invoke_hyfg37$(void 0, 1600, 900, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, color.Colors.get_61zpoe$('#2b2b2b'), void 0, void 0, void 0, void 0, void 0, void 0, main$lambda, continuation);
   }
-  function createBoard($receiver, board, blockSize) {
+  function createBoard($receiver, board, blockSize, channel) {
     if (blockSize === void 0)
       blockSize = 100.0;
     var $receiver_0 = addTo(new Container_init(), $receiver);
@@ -1190,10 +1333,10 @@
           font = Fonts.Companion.defaultFont;
           var $receiver_0_1 = addTo(Text.Companion.invoke_8ii8iq$(text, textSize, color_0, font), $receiver_0_0);
           position($receiver_0_1, 5, 5);
-          init(cell, $receiver_0_0, board, size * 1.1);
+          init(cell, $receiver_0_0, board, size * 1.1, channel);
         }}
     }
-    init_0(board, $receiver_0, size * 1.1);
+    init_0(board, $receiver_0, channel);
     return $receiver_0;
   }
   function configuration$lambda($receiver) {
@@ -1440,20 +1583,24 @@
   _.Board = Board;
   _.get_view_4qjzxn$ = get_view;
   _.set_view_z21h04$ = set_view;
+  _.get_space_4qjzxn$ = get_space;
+  _.set_space_nk8ddj$ = set_space;
   $$importsForInline$$['korge-root-korge'] = $module$korge_root_korge;
-  _.init_1bttfb$ = init;
-  _.init_xu6jin$ = init_0;
+  _.init_tq2ps$ = init;
+  _.init_o2jp3s$ = init_0;
   $$importsForInline$$['klock-root-klock'] = $module$klock_root_klock;
   _.move_d6vitg$ = move;
   _.get_direction_izn8r9$ = get_direction;
+  $$importsForInline$$['kotlinx-coroutines-core'] = $module$kotlinx_coroutines_core;
   _.main = main;
-  _.createBoard_jm6i93$ = createBoard;
+  _.createBoard_c0f1pe$ = createBoard;
   _.configuration_yrwhay$ = configuration;
   _.clone_9ozadc$ = clone;
   _.plus_2dhgkl$ = plus;
   _.countTo_dqglrj$ = countTo;
   _.get_isVertical_ycmc7k$ = get_isVertical;
   view = new Extra$Property(void 0, view$lambda);
+  space = new Extra$Property(void 0, space$lambda);
   main(internal.EmptyContinuation, false);
   Kotlin.defineModule('Games-SlidingGame', _);
   return _;
