@@ -23,7 +23,7 @@ fun Board.FragmentCell.init(view: View, parent: Board, space: Double, channel: C
 	view.onClick {
 		val emptyPos = parent.emptyPos
 		val pos = position
-		val dir = getRelativePosition(emptyPos) ?: return@onClick
+		val dir = pos.getRelativePosition(emptyPos) ?: return@onClick
 		val cellsToMove = if (dir.isVertical) {
 			val from = emptyPos.y
 			val to = pos.y

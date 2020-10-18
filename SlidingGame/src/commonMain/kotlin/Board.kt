@@ -20,6 +20,11 @@ enum class Direction(val diff: Pair<Int, Int>) {
 		LEFT -> RIGHT
 		RIGHT -> LEFT
 	}
+
+	companion object {
+		val directions
+			get() = listOf(UP, DOWN, LEFT, RIGHT)
+	}
 }
 
 /**
@@ -32,26 +37,6 @@ class Board(val width: Int = 4, val height: Int = 4, from: List<Int>? = null) {
 		private val pos = PointInt(x, y)
 		val position
 			get() =  pos.clone()
-
-		/**
-		 * Get [Direction] of [to] point relative to this cell
-		 * Return null if same position or not in same column or row
-		 */
-		fun getRelativePosition(to: PointInt): Direction? {
-			val pos = position
-			return when {
-				pos == to -> null
-				pos.y == to.y -> {
-					if (pos.x < to.x) Direction.RIGHT
-					else Direction.LEFT
-				}
-				pos.x == to.x -> {
-					if (pos.y < to.y) Direction.DOWN
-					else Direction.UP
-				}
-				else -> null
-			}
-		}
 
 		/**
 		 * Move cell to empty position in [direction] if adjacent cell is empty

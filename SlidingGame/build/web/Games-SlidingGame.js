@@ -28,11 +28,12 @@
   'use strict';
   var $$importsForInline$$ = _.$$importsForInline$$ || (_.$$importsForInline$$ = {});
   var Pair = Kotlin.kotlin.Pair;
+  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
+  var Kind_OBJECT = Kotlin.Kind.OBJECT;
   var Enum = Kotlin.kotlin.Enum;
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var throwISE = Kotlin.throwISE;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
-  var Kind_OBJECT = Kotlin.Kind.OBJECT;
   var Extra = $module$kds_root_kds.com.soywiz.kds.Extra;
   var Extra$Mixin = $module$kds_root_kds.com.soywiz.kds.Extra.Mixin;
   var PointInt = $module$korma_root_korma.com.soywiz.korma.geom.PointInt;
@@ -53,7 +54,7 @@
   var drop = Kotlin.kotlin.collections.drop_ba2ldo$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
-  var listOf = Kotlin.kotlin.collections.listOf_mh5how$;
+  var listOf_0 = Kotlin.kotlin.collections.listOf_mh5how$;
   var getPropertyCallableRef = Kotlin.getPropertyCallableRef;
   var Easing = $module$korma_root_korma.com.soywiz.korma.interpolation.Easing;
   var tween = $module$korge_root_korge.com.soywiz.korge.tween.tween_t8t7it$;
@@ -93,11 +94,14 @@
   var Math_0 = Math;
   var Container_init = $module$korge_root_korge.com.soywiz.korge.view.Container;
   var SolidRect_init = $module$korge_root_korge.com.soywiz.korge.view.SolidRect;
+  var TGenQueue = $module$kds_root_kds.com.soywiz.kds.TGenQueue;
+  var AssertionError_init = Kotlin.kotlin.AssertionError_init_pdl1vj$;
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var downTo = Kotlin.kotlin.ranges.downTo_dqglrj$;
+  var AssertionError_init_0 = Kotlin.kotlin.AssertionError_init_s8jyv4$;
   var get_isOdd = $module$kmem_root_kmem.com.soywiz.kmem.get_isOdd_s8ev3n$;
   var get_isEven = $module$kmem_root_kmem.com.soywiz.kmem.get_isEven_s8ev3n$;
   var checkCountOverflow = Kotlin.kotlin.collections.checkCountOverflow_za3lpa$;
-  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   Direction.prototype = Object.create(Enum.prototype);
   Direction.prototype.constructor = Direction;
   function Direction(name, ordinal, diff) {
@@ -113,6 +117,7 @@
     Direction$DOWN_instance = new Direction('DOWN', 1, new Pair(0, 1));
     Direction$LEFT_instance = new Direction('LEFT', 2, new Pair(-1, 0));
     Direction$RIGHT_instance = new Direction('RIGHT', 3, new Pair(1, 0));
+    Direction$Companion_getInstance();
   }
   var Direction$UP_instance;
   function Direction$UP_getInstance() {
@@ -147,6 +152,26 @@
       default:return Kotlin.noWhenBranchMatched();
     }
   };
+  function Direction$Companion() {
+    Direction$Companion_instance = this;
+  }
+  Object.defineProperty(Direction$Companion.prototype, 'directions', {
+    get: function () {
+      return listOf([Direction$UP_getInstance(), Direction$DOWN_getInstance(), Direction$LEFT_getInstance(), Direction$RIGHT_getInstance()]);
+    }
+  });
+  Direction$Companion.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'Companion',
+    interfaces: []
+  };
+  var Direction$Companion_instance = null;
+  function Direction$Companion_getInstance() {
+    Direction_initFields();
+    if (Direction$Companion_instance === null) {
+      new Direction$Companion();
+    }return Direction$Companion_instance;
+  }
   Direction.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'Direction',
@@ -246,19 +271,6 @@
       return clone(this.pos_0);
     }
   });
-  Board$FragmentCell.prototype.getRelativePosition_mlm8fl$ = function (to) {
-    var tmp$;
-    var pos = this.position;
-    if (pos != null ? pos.equals(to) : null)
-      tmp$ = null;
-    else if (pos.y === to.y)
-      tmp$ = pos.x < to.x ? Direction$RIGHT_getInstance() : Direction$LEFT_getInstance();
-    else if (pos.x === to.x)
-      tmp$ = pos.y < to.y ? Direction$DOWN_getInstance() : Direction$UP_getInstance();
-    else
-      tmp$ = null;
-    return tmp$;
-  };
   Board$FragmentCell.prototype.move_h80bq7$ = function (direction) {
     var newPos = plus(this.position, direction.diff);
     var tmp$ = this.$outer.board.inside_vux9f0$(newPos.x, newPos.y);
@@ -516,7 +528,7 @@
             var tmp$;
             this.local$emptyPos = this.local$closure$parent.emptyPos;
             this.local$pos = this.local$this$init.position;
-            this.local$tmp$ = this.local$this$init.getRelativePosition_mlm8fl$(this.local$emptyPos);
+            this.local$tmp$ = getRelativePosition(this.local$pos, this.local$emptyPos);
             if (this.local$tmp$ == null) {
               return;
             } else {
@@ -630,7 +642,7 @@
               var closure$channel = this.local$closure$channel;
               var cellPos = plus(this$init.emptyPos, tmp$.diff);
               if (this$init.board.inside_vux9f0$(cellPos.x, cellPos.y) && Kotlin.isType(this$init.get_mlm8fl$(cellPos), Board$FragmentCell)) {
-                var cellsToMove = listOf(new Pair(cellPos, tmp$.inv()));
+                var cellsToMove = listOf_0(new Pair(cellPos, tmp$.inv()));
                 this.state_0 = 2;
                 this.result_0 = closure$channel.send_11rb$(cellsToMove, this);
                 if (this.result_0 === COROUTINE_SUSPENDED)
@@ -1589,7 +1601,99 @@
   }
   Solver.prototype.solve_b0tygf$ = function (board, channel) {
   };
-  Solver.prototype.solvePosition = function () {
+  Solver.prototype.getPath_girn7e$ = function (start, end, board) {
+    var tmp$, tmp$_0, tmp$_1;
+    board.get_vux9f0$(start.x, start.y).mark = true;
+    var queue = new TGenQueue();
+    queue.enqueue_11rb$(start);
+    var pathFound = false;
+    while (!queue.isEmpty()) {
+      var startPos = queue.dequeue();
+      tmp$ = Direction$Companion_getInstance().directions.iterator();
+      while (tmp$.hasNext()) {
+        var dir = tmp$.next();
+        var nextPos = plus(startPos, dir.diff);
+        if (!board.inside_vux9f0$(nextPos.x, nextPos.y)) {
+          continue;
+        }var next = board.get_vux9f0$(nextPos.x, nextPos.y);
+        if (nextPos != null ? nextPos.equals(end) : null) {
+          pathFound = true;
+          break;
+        } else if (!next.mark && !next.lock) {
+          next.lastPos = startPos;
+          next.mark = true;
+          queue.enqueue_11rb$(nextPos);
+        }}
+    }
+    assert(pathFound, 'No path found from ' + start + ' to ' + end);
+    var out = ArrayList_init_0();
+    var next_0 = end;
+    while (!(next_0 != null ? next_0.equals(start) : null)) {
+      var p = next_0;
+      var nextCell = board.get_vux9f0$(p.x, p.y);
+      tmp$_0 = nextCell.lastPos;
+      if (tmp$_0 == null) {
+        throw AssertionError_init('Path is not complete');
+      }var lastPos = tmp$_0;
+      tmp$_1 = getRelativePosition(nextCell.pos, lastPos);
+      if (tmp$_1 == null) {
+        throw AssertionError_init(lastPos.toString() + ' is not in the same row or column as ' + nextCell.pos);
+      }var dir_0 = tmp$_1;
+      out.add_wxm5ur$(0, new Pair(next_0, dir_0));
+      next_0 = lastPos;
+    }
+    return out;
+  };
+  function Solver$Cell(pos, index, lock, mark, lastPos) {
+    if (lock === void 0)
+      lock = false;
+    if (mark === void 0)
+      mark = false;
+    if (lastPos === void 0)
+      lastPos = null;
+    this.pos = pos;
+    this.index = index;
+    this.lock = lock;
+    this.mark = mark;
+    this.lastPos = lastPos;
+  }
+  Solver$Cell.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Cell',
+    interfaces: []
+  };
+  Solver$Cell.prototype.component1 = function () {
+    return this.pos;
+  };
+  Solver$Cell.prototype.component2 = function () {
+    return this.index;
+  };
+  Solver$Cell.prototype.component3 = function () {
+    return this.lock;
+  };
+  Solver$Cell.prototype.component4 = function () {
+    return this.mark;
+  };
+  Solver$Cell.prototype.component5 = function () {
+    return this.lastPos;
+  };
+  Solver$Cell.prototype.copy_x93g2l$ = function (pos, index, lock, mark, lastPos) {
+    return new Solver$Cell(pos === void 0 ? this.pos : pos, index === void 0 ? this.index : index, lock === void 0 ? this.lock : lock, mark === void 0 ? this.mark : mark, lastPos === void 0 ? this.lastPos : lastPos);
+  };
+  Solver$Cell.prototype.toString = function () {
+    return 'Cell(pos=' + Kotlin.toString(this.pos) + (', index=' + Kotlin.toString(this.index)) + (', lock=' + Kotlin.toString(this.lock)) + (', mark=' + Kotlin.toString(this.mark)) + (', lastPos=' + Kotlin.toString(this.lastPos)) + ')';
+  };
+  Solver$Cell.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.pos) | 0;
+    result = result * 31 + Kotlin.hashCode(this.index) | 0;
+    result = result * 31 + Kotlin.hashCode(this.lock) | 0;
+    result = result * 31 + Kotlin.hashCode(this.mark) | 0;
+    result = result * 31 + Kotlin.hashCode(this.lastPos) | 0;
+    return result;
+  };
+  Solver$Cell.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.pos, other.pos) && Kotlin.equals(this.index, other.index) && Kotlin.equals(this.lock, other.lock) && Kotlin.equals(this.mark, other.mark) && Kotlin.equals(this.lastPos, other.lastPos)))));
   };
   Solver.$metadata$ = {
     kind: Kind_OBJECT,
@@ -1616,6 +1720,24 @@
       tmp$ = downTo($receiver, to);
     }
     return tmp$;
+  }
+  function getRelativePosition($receiver, to) {
+    var tmp$;
+    if ($receiver != null ? $receiver.equals(to) : null)
+      tmp$ = null;
+    else if ($receiver.y === to.y)
+      tmp$ = $receiver.x < to.x ? Direction$RIGHT_getInstance() : Direction$LEFT_getInstance();
+    else if ($receiver.x === to.x)
+      tmp$ = $receiver.y < to.y ? Direction$DOWN_getInstance() : Direction$UP_getInstance();
+    else
+      tmp$ = null;
+    return tmp$;
+  }
+  function assert(cond, message) {
+    if (message === void 0)
+      message = null;
+    if (!cond)
+      throw AssertionError_init_0(message);
   }
   function get_isVertical($receiver) {
     return $receiver === Direction$UP_getInstance() || $receiver === Direction$DOWN_getInstance();
@@ -1679,6 +1801,9 @@
   Object.defineProperty(Direction, 'RIGHT', {
     get: Direction$RIGHT_getInstance
   });
+  Object.defineProperty(Direction, 'Companion', {
+    get: Direction$Companion_getInstance
+  });
   _.Direction = Direction;
   Board.Cell = Board$Cell;
   Object.defineProperty(Board, 'EmptyCell', {
@@ -1705,12 +1830,15 @@
   _.main = main;
   _.createBoard_c0f1pe$ = createBoard;
   _.configuration_yrwhay$ = configuration;
+  Solver.prototype.Cell = Solver$Cell;
   Object.defineProperty(_, 'Solver', {
     get: Solver_getInstance
   });
   _.clone_9ozadc$ = clone;
   _.plus_2dhgkl$ = plus;
   _.countTo_dqglrj$ = countTo;
+  _.getRelativePosition_ixjqi9$ = getRelativePosition;
+  _.assert_qlx5jl$ = assert;
   _.get_isVertical_ycmc7k$ = get_isVertical;
   _.get_isSolvable_wzskkp$ = get_isSolvable;
   view = new Extra$Property(void 0, view$lambda);
