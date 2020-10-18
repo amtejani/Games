@@ -1,8 +1,8 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd)
-    define(['exports', 'kotlin', 'korma-root-korma', 'kds-root-kds', 'korio-root-korio', 'korge-root-korge', 'klock-root-klock', 'korim-root-korim', 'kotlinx-coroutines-core'], factory);
+    define(['exports', 'kotlin', 'korma-root-korma', 'kds-root-kds', 'korio-root-korio', 'korge-root-korge', 'klock-root-klock', 'korim-root-korim', 'kotlinx-coroutines-core', 'kmem-root-kmem'], factory);
   else if (typeof exports === 'object')
-    factory(module.exports, require('kotlin'), require('korma-root-korma'), require('kds-root-kds'), require('korio-root-korio'), require('korge-root-korge'), require('klock-root-klock'), require('korim-root-korim'), require('kotlinx-coroutines-core'));
+    factory(module.exports, require('kotlin'), require('korma-root-korma'), require('kds-root-kds'), require('korio-root-korio'), require('korge-root-korge'), require('klock-root-klock'), require('korim-root-korim'), require('kotlinx-coroutines-core'), require('kmem-root-kmem'));
   else {
     if (typeof kotlin === 'undefined') {
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'kotlin' was not found. Please, check whether 'kotlin' is loaded prior to 'Games-SlidingGame'.");
@@ -20,9 +20,11 @@
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'korim-root-korim' was not found. Please, check whether 'korim-root-korim' is loaded prior to 'Games-SlidingGame'.");
     }if (typeof this['kotlinx-coroutines-core'] === 'undefined') {
       throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'kotlinx-coroutines-core' was not found. Please, check whether 'kotlinx-coroutines-core' is loaded prior to 'Games-SlidingGame'.");
-    }root['Games-SlidingGame'] = factory(typeof this['Games-SlidingGame'] === 'undefined' ? {} : this['Games-SlidingGame'], kotlin, this['korma-root-korma'], this['kds-root-kds'], this['korio-root-korio'], this['korge-root-korge'], this['klock-root-klock'], this['korim-root-korim'], this['kotlinx-coroutines-core']);
+    }if (typeof this['kmem-root-kmem'] === 'undefined') {
+      throw new Error("Error loading module 'Games-SlidingGame'. Its dependency 'kmem-root-kmem' was not found. Please, check whether 'kmem-root-kmem' is loaded prior to 'Games-SlidingGame'.");
+    }root['Games-SlidingGame'] = factory(typeof this['Games-SlidingGame'] === 'undefined' ? {} : this['Games-SlidingGame'], kotlin, this['korma-root-korma'], this['kds-root-kds'], this['korio-root-korio'], this['korge-root-korge'], this['klock-root-klock'], this['korim-root-korim'], this['kotlinx-coroutines-core'], this['kmem-root-kmem']);
   }
-}(this, function (_, Kotlin, $module$korma_root_korma, $module$kds_root_kds, $module$korio_root_korio, $module$korge_root_korge, $module$klock_root_klock, $module$korim_root_korim, $module$kotlinx_coroutines_core) {
+}(this, function (_, Kotlin, $module$korma_root_korma, $module$kds_root_kds, $module$korio_root_korio, $module$korge_root_korge, $module$klock_root_klock, $module$korim_root_korim, $module$kotlinx_coroutines_core, $module$kmem_root_kmem) {
   'use strict';
   var $$importsForInline$$ = _.$$importsForInline$$ || (_.$$importsForInline$$ = {});
   var Pair = Kotlin.kotlin.Pair;
@@ -35,6 +37,7 @@
   var Extra$Mixin = $module$kds_root_kds.com.soywiz.kds.Extra.Mixin;
   var PointInt = $module$korma_root_korma.com.soywiz.korma.geom.PointInt;
   var first = Kotlin.kotlin.collections.first_2p1efm$;
+  var println = Kotlin.kotlin.io.println_s8jyv4$;
   var Signal = $module$korio_root_korio.com.soywiz.korio.async.Signal;
   var shuffled = Kotlin.kotlin.collections.shuffled_7wnvza$;
   var Array2 = $module$kds_root_kds.com.soywiz.kds.Array2;
@@ -91,6 +94,10 @@
   var Container_init = $module$korge_root_korge.com.soywiz.korge.view.Container;
   var SolidRect_init = $module$korge_root_korge.com.soywiz.korge.view.SolidRect;
   var downTo = Kotlin.kotlin.ranges.downTo_dqglrj$;
+  var get_isOdd = $module$kmem_root_kmem.com.soywiz.kmem.get_isOdd_s8ev3n$;
+  var get_isEven = $module$kmem_root_kmem.com.soywiz.kmem.get_isEven_s8ev3n$;
+  var checkCountOverflow = Kotlin.kotlin.collections.checkCountOverflow_za3lpa$;
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   Direction.prototype = Object.create(Enum.prototype);
   Direction.prototype.constructor = Direction;
   function Direction(name, ordinal, diff) {
@@ -163,29 +170,38 @@
     }
   }
   Direction.valueOf_61zpoe$ = Direction$valueOf;
-  function Board(width, height) {
+  function Board(width, height, from) {
+    Board$Companion_getInstance();
     if (width === void 0)
       width = 4;
     if (height === void 0)
       height = 4;
+    if (from === void 0)
+      from = null;
     this.width = width;
     this.height = height;
     this.board = null;
     this.gameOverSignal_0 = new Signal();
     this.moveSignal_0 = new Signal();
-    var size = Kotlin.imul(this.width, this.height);
-    var list = ArrayList_init(size);
-    for (var index = 0; index < size; index++) {
-      list.add_11rb$(index);
+    var tmp$;
+    if (from != null)
+      tmp$ = from;
+    else {
+      var size = Kotlin.imul(this.width, this.height);
+      var list = ArrayList_init(size);
+      for (var index = 0; index < size; index++) {
+        list.add_11rb$(index);
+      }
+      tmp$ = shuffled(list);
     }
-    var arr = shuffled(list);
+    var arr = tmp$;
     var width_0 = this.width;
     var height_0 = this.height;
-    var tmp$;
-    var array = Array_0(Kotlin.imul(width_0, height_0));
     var tmp$_0;
-    tmp$_0 = array.length - 1 | 0;
-    for (var i = 0; i <= tmp$_0; i++) {
+    var array = Array_0(Kotlin.imul(width_0, height_0));
+    var tmp$_0_0;
+    tmp$_0_0 = array.length - 1 | 0;
+    for (var i = 0; i <= tmp$_0_0; i++) {
       var gen$result;
       var index_0 = arr.get_za3lpa$(i);
       if ((index_0 + 1 | 0) < Kotlin.imul(this.width, this.height)) {
@@ -195,7 +211,7 @@
       }
       array[i] = gen$result;
     }
-    this.board = new Array2(width_0, height_0, Kotlin.isArray(tmp$ = array) ? tmp$ : throwCCE());
+    this.board = new Array2(width_0, height_0, Kotlin.isArray(tmp$_0 = array) ? tmp$_0 : throwCCE());
     this.moveSignal_0.invoke_qlkmfe$(Board_init$lambda(this));
   }
   function Board$Cell() {
@@ -330,6 +346,32 @@
      while (false);
     return all$result;
   };
+  function Board$Companion() {
+    Board$Companion_instance = this;
+  }
+  Board$Companion.prototype.generateSolvable_vux9f0$ = function (width, height) {
+    var b;
+    var solvable;
+    do {
+      b = new Board(width, height);
+      solvable = get_isSolvable(b);
+      if (!solvable)
+        println('Board is not solvable, regenerating.');
+    }
+     while (!solvable);
+    return b;
+  };
+  Board$Companion.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'Companion',
+    interfaces: []
+  };
+  var Board$Companion_instance = null;
+  function Board$Companion_getInstance() {
+    if (Board$Companion_instance === null) {
+      new Board$Companion();
+    }return Board$Companion_instance;
+  }
   function Board_init$lambda(this$Board) {
     return function (it) {
       var cell = this$Board.board.get_vux9f0$(it.x, it.y);
@@ -1184,7 +1226,7 @@
             (tmp$ = this.local$closure$gameOverCloseable.v) != null ? (tmp$.close(), Unit) : null;
             (tmp$_0 = this.local$closure$board.v) != null ? (tmp$_0.cleanUp(), Unit) : null;
             var tmp$_1 = this.local$closure$board;
-            var $receiver = new Board(this.local$closure$boardWidth.v, this.local$closure$boardHeight.v);
+            var $receiver = Board$Companion_getInstance().generateSolvable_vux9f0$(this.local$closure$boardWidth.v, this.local$closure$boardHeight.v);
             var this$ = this.local$this$;
             var closure$boardWidth = this.local$closure$boardWidth;
             var closure$boardHeight = this.local$closure$boardHeight;
@@ -1542,6 +1584,24 @@
     }callback($receiver_0_0);
     return $receiver_0_0;
   }
+  function Solver() {
+    Solver_instance = this;
+  }
+  Solver.prototype.solve_b0tygf$ = function (board, channel) {
+  };
+  Solver.prototype.solvePosition = function () {
+  };
+  Solver.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'Solver',
+    interfaces: []
+  };
+  var Solver_instance = null;
+  function Solver_getInstance() {
+    if (Solver_instance === null) {
+      new Solver();
+    }return Solver_instance;
+  }
   function clone($receiver) {
     return PointInt.Companion.invoke_vux9f0$($receiver.x, $receiver.y);
   }
@@ -1559,6 +1619,53 @@
   }
   function get_isVertical($receiver) {
     return $receiver === Direction$UP_getInstance() || $receiver === Direction$DOWN_getInstance();
+  }
+  function get_isSolvable($receiver) {
+    var $receiver_0 = $receiver.board.data;
+    var destination = ArrayList_init_0();
+    var tmp$;
+    for (tmp$ = 0; tmp$ !== $receiver_0.length; ++tmp$) {
+      var element = $receiver_0[tmp$];
+      if (Kotlin.isType(element, Board$FragmentCell))
+        destination.add_11rb$(element);
+    }
+    var destination_0 = ArrayList_init(collectionSizeOrDefault(destination, 10));
+    var tmp$_0;
+    tmp$_0 = destination.iterator();
+    while (tmp$_0.hasNext()) {
+      var item = tmp$_0.next();
+      destination_0.add_11rb$(item.index);
+    }
+    var data = destination_0;
+    var tmp$_1, tmp$_0_0;
+    var index = 0;
+    var accumulator = 0;
+    tmp$_1 = data.iterator();
+    loop_label: while (tmp$_1.hasNext()) {
+      var element_0 = tmp$_1.next();
+      var index_0 = checkIndexOverflow((tmp$_0_0 = index, index = tmp$_0_0 + 1 | 0, tmp$_0_0));
+      var acc = accumulator;
+      var $receiver_1 = data.subList_vux9f0$(index_0 + 1 | 0, data.size);
+      var count$result;
+      count$break: do {
+        var tmp$_2;
+        if (Kotlin.isType($receiver_1, Collection) && $receiver_1.isEmpty()) {
+          count$result = 0;
+          break count$break;
+        }var count = 0;
+        tmp$_2 = $receiver_1.iterator();
+        while (tmp$_2.hasNext()) {
+          var element_1 = tmp$_2.next();
+          if (element_0 > element_1)
+            checkCountOverflow((count = count + 1 | 0, count));
+        }
+        count$result = count;
+      }
+       while (false);
+      accumulator = acc + count$result | 0;
+    }
+    var inversions = accumulator;
+    return get_isOdd($receiver.width) && get_isEven(inversions) || get_isOdd($receiver.height - $receiver.emptyPos.y | 0) ^ get_isOdd(inversions);
   }
   Object.defineProperty(Direction, 'UP', {
     get: Direction$UP_getInstance
@@ -1579,6 +1686,9 @@
   });
   $$importsForInline$$['korma-root-korma'] = $module$korma_root_korma;
   Board.FragmentCell = Board$FragmentCell;
+  Object.defineProperty(Board, 'Companion', {
+    get: Board$Companion_getInstance
+  });
   $$importsForInline$$['kds-root-kds'] = $module$kds_root_kds;
   _.Board = Board;
   _.get_view_4qjzxn$ = get_view;
@@ -1595,10 +1705,14 @@
   _.main = main;
   _.createBoard_c0f1pe$ = createBoard;
   _.configuration_yrwhay$ = configuration;
+  Object.defineProperty(_, 'Solver', {
+    get: Solver_getInstance
+  });
   _.clone_9ozadc$ = clone;
   _.plus_2dhgkl$ = plus;
   _.countTo_dqglrj$ = countTo;
   _.get_isVertical_ycmc7k$ = get_isVertical;
+  _.get_isSolvable_wzskkp$ = get_isSolvable;
   view = new Extra$Property(void 0, view$lambda);
   space = new Extra$Property(void 0, space$lambda);
   main(internal.EmptyContinuation, false);
