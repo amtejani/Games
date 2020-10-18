@@ -74,7 +74,7 @@ suspend fun main() = Korge(width = 1600, height = 900, bgcolor = Colors["#2b2b2b
 		gameOverCloseable?.close()
 		board?.cleanUp()
 
-		board = Board(boardWidth, boardHeight).also {
+		board = Board.generateSolvable(boardWidth, boardHeight).also {
 			position(100, 100)
 			val blockSize = min(views.virtualWidth / (boardWidth * 1.1) * 4 / 5, views.virtualHeight / (boardHeight * 1.1) / 2)
 			boardContainer = createBoard(it, blockSize, channel)

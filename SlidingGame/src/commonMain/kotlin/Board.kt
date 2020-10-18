@@ -25,7 +25,7 @@ enum class Direction(val diff: Pair<Int, Int>) {
 /**
  * Class to manage board state
  */
-class Board(val width: Int = 4, val height: Int = 4) {
+class Board(val width: Int = 4, val height: Int = 4, from: List<Int>? = null) {
 	interface Cell
 	object EmptyCell : Cell
 	inner class FragmentCell(x: Int, y: Int, val index: Int) : Cell, Extra by Extra.Mixin() {
@@ -77,7 +77,7 @@ class Board(val width: Int = 4, val height: Int = 4) {
 
 	init {
 		// generate board
-		val arr = List(width * height) {
+		val arr = from ?: List(width * height) {
 			it
 		}.shuffled()
 		board = Array2(width, height) {
@@ -129,4 +129,20 @@ class Board(val width: Int = 4, val height: Int = 4) {
 			else -> false
 		}
 	}.all { it }
+
+	companion object {
+		/**
+		 * Generate a solvable board.
+		 */
+		fun generateSolvable(width: Int, height: Int): Board {
+			var b: Board
+			var solvable: Boolean
+			do {
+				b = Board(width, height)
+				solvable = b.isSolvable
+				if (!solvable) println("Board is not solvable, regenerating.")
+			} while (!solvable)
+			return b
+		}
+	}
 }
