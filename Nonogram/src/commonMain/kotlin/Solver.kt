@@ -117,7 +117,7 @@ object Solver {
      */
     fun solveLine(line: List<MineState>, counts: List<Count>): List<CellState> {
         // Ignore complete lines
-        if (line.all { it == MineState.UNMARKED }) return line.map {
+        if (line.all { it != MineState.UNMARKED }) return line.map {
             if (it == MineState.EMPTY) {
                 CellState.EMPTY
             } else {

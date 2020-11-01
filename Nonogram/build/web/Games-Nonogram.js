@@ -2724,7 +2724,7 @@
       }tmp$ = line.iterator();
       while (tmp$.hasNext()) {
         var element = tmp$.next();
-        if (!(element === MineState$UNMARKED_getInstance())) {
+        if (!(element !== MineState$UNMARKED_getInstance())) {
           all$result = false;
           break all$break;
         }}
