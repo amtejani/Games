@@ -98,23 +98,24 @@ fun <T> Array2<T>.getPath(start: PointInt, end: PointInt, ignorePredicate: ((T) 
 	val queue = Queue<PointInt>()
 	queue.enqueue(start)
 	var pathFound = false
-	while (queue.isNotEmpty()) {
+	while (queue.isNotEmpty() && !pathFound) {
 		val startPos = queue.dequeue()
 		for (dir in Direction.directions) {
 			val nextPos = startPos + dir.diff
 			if (!board.inside(nextPos.x, nextPos.y)) {
 				continue
 			}
-			if (nextPos == end) {
-				pathFound = true
-				break
-			}
 
 			val next = board[nextPos]
-			if (!next.mark && ignorePredicate?.invoke(next.item) == true) {
+			if (!next.mark && ignorePredicate?.invoke(next.item) != true) {
 				next.lastPos = startPos
 				next.mark = true
 				queue.enqueue(nextPos)
+
+				if (nextPos == end) {
+					pathFound = true
+					break
+				}
 			}
 		}
 	}

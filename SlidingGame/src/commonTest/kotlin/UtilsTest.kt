@@ -1,4 +1,7 @@
+import com.soywiz.kds.Array2
+import com.soywiz.korma.geom.PointInt
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -55,5 +58,29 @@ class UtilsTest {
 		assertFalse(Board(4, 4, unsolvableBoard1.toList()).isSolvable)
 		assertFalse(Board(4, 4, unsolvableBoard2.toList()).isSolvable)
 		assertFalse(Board(3, 3, unsolvableBoard3.toList()).isSolvable)
+	}
+
+	private val pathGrid1 = listOf(
+		listOf(false, false),
+		listOf(false, false),
+		listOf(false, false),
+		listOf(false, false)
+	).let { Array2(it) }
+
+	private val pathGrid2 = listOf(
+		listOf(false, false),
+		listOf(false, false),
+		listOf(true, false),
+		listOf(false, false)
+	).let { Array2(it) }
+
+	@Test
+	fun testPath() {
+		val path1 = pathGrid1.getPath(PointInt(0, 3), PointInt(0, 0)) { it }
+		assertEquals(4, path1.size, "Path length does not match expected")
+		assertTrue("Path should not include ignored blocks") { path1.all { !it } }
+		val path2 = pathGrid2.getPath(PointInt(0, 3), PointInt(0, 0)) { it }
+		assertEquals(6, path2.size, "Path length does not match expected")
+		assertTrue("Path should not include ignored blocks") { path2.all { !it } }
 	}
 }
