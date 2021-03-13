@@ -1,9 +1,6 @@
 import com.soywiz.kds.Array2
 import com.soywiz.korma.geom.PointInt
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class UtilsTest {
 
@@ -65,22 +62,52 @@ class UtilsTest {
 		listOf(false, false),
 		listOf(false, false),
 		listOf(false, false)
-	).let { Array2(it) }
+	).mapIndexed { i: Int, list: List<Boolean> ->
+		list.mapIndexed { j: Int, value: Boolean ->
+			Pair(value, PointInt(j, i))
+		}
+	}.let { Array2(it) }
 
 	private val pathGrid2 = listOf(
 		listOf(false, false),
 		listOf(false, false),
 		listOf(true, false),
 		listOf(false, false)
-	).let { Array2(it) }
+	).mapIndexed { i: Int, list: List<Boolean> ->
+		list.mapIndexed { j: Int, value: Boolean ->
+			Pair(value, PointInt(j, i))
+		}
+	}.let { Array2(it) }
+
+	private val pathGrid3 = listOf(
+		listOf(false, false),
+		listOf(false, false),
+		listOf(true, true),
+		listOf(false, false)
+	).mapIndexed { i: Int, list: List<Boolean> ->
+		list.mapIndexed { j: Int, value: Boolean ->
+			Pair(value, PointInt(j, i))
+		}
+	}.let { Array2(it) }
 
 	@Test
 	fun testPath() {
-		val path1 = pathGrid1.getPath(PointInt(0, 3), PointInt(0, 0)) { it }
-		assertEquals(4, path1.size, "Path length does not match expected")
-		assertTrue("Path should not include ignored blocks") { path1.all { !it } }
-		val path2 = pathGrid2.getPath(PointInt(0, 3), PointInt(0, 0)) { it }
-		assertEquals(6, path2.size, "Path length does not match expected")
-		assertTrue("Path should not include ignored blocks") { path2.all { !it } }
+		val path1 = pathGrid1.getPath(PointInt(0, 3), PointInt(0, 0)) { it.first }
+		testPath(path1, 4)
+		val path2 = pathGrid2.getPath(PointInt(0, 3), PointInt(0, 0)) { it.first }
+		testPath(path2, 6)
+		assertFails {
+			pathGrid3.getPath(PointInt(0, 3), PointInt(0, 0)) { it.first }
+		}
+	}
+
+	private fun testPath(path: List<Pair<Boolean, PointInt>>, expectedLength: Int) {
+		// Check if all items in path are adjacent
+		val allAdjacent = path.map { it.second }.fold(Pair<Boolean, PointInt?>(true, null)) { acc, pointInt ->
+			Pair(acc.first && acc.second?.isAdjacent(pointInt) != false, pointInt)
+		}.first
+		assertTrue(allAdjacent, "All items in path should be adjacent")
+		assertEquals(expectedLength, path.size, "Path length does not match expected")
+		assertTrue("Path should not include ignored blocks") { path.all { !it.first } }
 	}
 }

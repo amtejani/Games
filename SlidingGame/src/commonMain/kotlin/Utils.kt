@@ -4,6 +4,8 @@ import com.soywiz.kmem.isEven
 import com.soywiz.kmem.isOdd
 import com.soywiz.korma.geom.PointInt
 import com.soywiz.korma.geom.ds.get
+import com.soywiz.korma.geom.minus
+import kotlin.math.abs
 
 /**
  * Map an [Array2] to another [Array2]
@@ -51,6 +53,11 @@ fun PointInt.getRelativePosition(to: PointInt): Direction? {
 		}
 		else -> null
 	}
+}
+
+fun PointInt.isAdjacent(to: PointInt): Boolean {
+	val diff = to - this
+	return abs(diff.x - diff.y) == 1
 }
 
 fun assert(cond: Boolean, message: Any? = null) {
