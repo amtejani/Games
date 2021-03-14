@@ -1612,8 +1612,6 @@
   }
   Solver.prototype.solve_b0tygf$ = function (board, channel) {
   };
-  Solver.prototype.solveRow_r04rj8$ = function (row, board) {
-  };
   function Solver$createPath$lambda(it) {
     return it.lock;
   }
