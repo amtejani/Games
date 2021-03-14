@@ -94,14 +94,24 @@
   var Math_0 = Math;
   var Container_init = $module$korge_root_korge.com.soywiz.korge.view.Container;
   var SolidRect_init = $module$korge_root_korge.com.soywiz.korge.view.SolidRect;
-  var TGenQueue = $module$kds_root_kds.com.soywiz.kds.TGenQueue;
+  var dropLast = Kotlin.kotlin.collections.dropLast_yzln2o$;
+  var zip = Kotlin.kotlin.collections.zip_45mdf7$;
   var AssertionError_init = Kotlin.kotlin.AssertionError_init_pdl1vj$;
-  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
+  var ensureNotNull = Kotlin.ensureNotNull;
+  var sequence = Kotlin.kotlin.sequences.sequence_o0x0bg$;
+  var toList = Kotlin.kotlin.sequences.toList_veqyi0$;
+  var defineInlineFunction = Kotlin.defineInlineFunction;
+  var wrapFunction = Kotlin.wrapFunction;
   var downTo = Kotlin.kotlin.ranges.downTo_dqglrj$;
+  var minus = $module$korma_root_korma.com.soywiz.korma.geom.minus_vszzvl$;
+  var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var AssertionError_init_0 = Kotlin.kotlin.AssertionError_init_s8jyv4$;
   var get_isOdd = $module$kmem_root_kmem.com.soywiz.kmem.get_isOdd_s8ev3n$;
   var get_isEven = $module$kmem_root_kmem.com.soywiz.kmem.get_isEven_s8ev3n$;
+  var TGenQueue = $module$kds_root_kds.com.soywiz.kds.TGenQueue;
+  var reversed = Kotlin.kotlin.collections.reversed_7wnvza$;
   var checkCountOverflow = Kotlin.kotlin.collections.checkCountOverflow_za3lpa$;
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   Direction.prototype = Object.create(Enum.prototype);
   Direction.prototype.constructor = Direction;
   function Direction(name, ordinal, diff) {
@@ -1598,64 +1608,213 @@
   }
   function Solver() {
     Solver_instance = this;
+    this.EMPTY_CELL_INDEX_0 = -1;
   }
   Solver.prototype.solve_b0tygf$ = function (board, channel) {
   };
-  Solver.prototype.getPath_girn7e$ = function (start, end, board) {
-    var tmp$, tmp$_0, tmp$_1;
-    board.get_vux9f0$(start.x, start.y).mark = true;
-    var queue = new TGenQueue();
-    queue.enqueue_11rb$(start);
-    var pathFound = false;
-    while (!queue.isEmpty()) {
-      var startPos = queue.dequeue();
-      tmp$ = Direction$Companion_getInstance().directions.iterator();
-      while (tmp$.hasNext()) {
-        var dir = tmp$.next();
-        var nextPos = plus(startPos, dir.diff);
-        if (!board.inside_vux9f0$(nextPos.x, nextPos.y)) {
-          continue;
-        }var next = board.get_vux9f0$(nextPos.x, nextPos.y);
-        if (nextPos != null ? nextPos.equals(end) : null) {
-          pathFound = true;
-          break;
-        } else if (!next.mark && !next.lock) {
-          next.lastPos = startPos;
-          next.mark = true;
-          queue.enqueue_11rb$(nextPos);
-        }}
-    }
-    assert(pathFound, 'No path found from ' + start + ' to ' + end);
-    var out = ArrayList_init_0();
-    var next_0 = end;
-    while (!(next_0 != null ? next_0.equals(start) : null)) {
-      var p = next_0;
-      var nextCell = board.get_vux9f0$(p.x, p.y);
-      tmp$_0 = nextCell.lastPos;
-      if (tmp$_0 == null) {
-        throw AssertionError_init('Path is not complete');
-      }var lastPos = tmp$_0;
-      tmp$_1 = getRelativePosition(nextCell.pos, lastPos);
-      if (tmp$_1 == null) {
-        throw AssertionError_init(lastPos.toString() + ' is not in the same row or column as ' + nextCell.pos);
-      }var dir_0 = tmp$_1;
-      out.add_wxm5ur$(0, new Pair(next_0, dir_0));
-      next_0 = lastPos;
-    }
-    return out;
+  Solver.prototype.solveRow_r04rj8$ = function (row, board) {
   };
-  function Solver$Cell(pos, index, lock, mark, lastPos) {
+  function Solver$createPath$lambda(it) {
+    return it.lock;
+  }
+  function Coroutine$Solver$createPath$lambda(closure$pathPairs_0, closure$emptyPos_0, closure$board_0, this$Solver_0, closure$cellPos_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$closure$pathPairs = closure$pathPairs_0;
+    this.local$closure$emptyPos = closure$emptyPos_0;
+    this.local$closure$board = closure$board_0;
+    this.local$this$Solver = this$Solver_0;
+    this.local$closure$cellPos = closure$cellPos_0;
+    this.local$tmp$ = void 0;
+    this.local$element = void 0;
+    this.local$closure$emptyPos_0 = void 0;
+    this.local$closure$cellPos_0 = void 0;
+    this.local$$receiver = $receiver_0;
+  }
+  Coroutine$Solver$createPath$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$Solver$createPath$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$Solver$createPath$lambda.prototype.constructor = Coroutine$Solver$createPath$lambda;
+  Coroutine$Solver$createPath$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.local$tmp$ = this.local$closure$pathPairs.iterator();
+            this.state_0 = 2;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            if (!this.local$tmp$.hasNext()) {
+              this.state_0 = 5;
+              continue;
+            }
+            this.local$element = this.local$tmp$.next();
+            this.local$closure$emptyPos_0 = this.local$closure$emptyPos;
+            var closure$board = this.local$closure$board;
+            var this$Solver = this.local$this$Solver;
+            this.local$closure$cellPos_0 = this.local$closure$cellPos;
+            var emptyPath = this$Solver.getEmptyPath_0(this.local$closure$emptyPos_0.v, this.local$element.first.pos, closure$board);
+            this.state_0 = 3;
+            this.result_0 = this.local$$receiver.yieldAll_p1ys8y$(emptyPath, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 3:
+            this.state_0 = 4;
+            this.result_0 = this.local$$receiver.yield_11rb$(new Pair(this.local$closure$cellPos_0.v, ensureNotNull(getRelativePosition(this.local$closure$cellPos_0.v, this.local$element.second.pos))), this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 4:
+            this.local$closure$emptyPos_0.v = this.local$closure$cellPos_0.v;
+            this.local$closure$cellPos_0.v = this.local$element.second.pos;
+            this.state_0 = 2;
+            continue;
+          case 5:
+            return Unit;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      } catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        } else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function Solver$createPath$lambda_0(closure$pathPairs_0, closure$emptyPos_0, closure$board_0, this$Solver_0, closure$cellPos_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$Solver$createPath$lambda(closure$pathPairs_0, closure$emptyPos_0, closure$board_0, this$Solver_0, closure$cellPos_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  Solver.prototype.createPath_girn7e$ = function (start, end, board) {
+    var tmp$, tmp$_0;
+    assert(board.get_vux9f0$(start.x, start.y).index !== -1);
+    var path = getPath(board, start, end, Solver$createPath$lambda);
+    var pathPairs = zip(dropLast(path, 1), drop(path, 1));
+    var firstOrNull$result;
+    firstOrNull$break: do {
+      var tmp$_1;
+      tmp$_1 = board.iterator();
+      while (tmp$_1.hasNext()) {
+        var element = tmp$_1.next();
+        if (element.index === -1) {
+          firstOrNull$result = element;
+          break firstOrNull$break;
+        }}
+      firstOrNull$result = null;
+    }
+     while (false);
+    tmp$_0 = (tmp$ = firstOrNull$result) != null ? tmp$.pos : null;
+    if (tmp$_0 == null) {
+      throw AssertionError_init('No empty cell');
+    }var emptyPos = {v: tmp$_0};
+    var cellPos = {v: start};
+    return toList(sequence(Solver$createPath$lambda_0(pathPairs, emptyPos, board, this, cellPos)));
+  };
+  function Solver$getEmptyPath$lambda(it) {
+    return it.lock;
+  }
+  function Coroutine$Solver$getEmptyPath$lambda(closure$path_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$closure$path = closure$path_0;
+    this.local$iterator = void 0;
+    this.local$cell = void 0;
+    this.local$next = void 0;
+    this.local$$receiver = $receiver_0;
+  }
+  Coroutine$Solver$getEmptyPath$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$Solver$getEmptyPath$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$Solver$getEmptyPath$lambda.prototype.constructor = Coroutine$Solver$getEmptyPath$lambda;
+  Coroutine$Solver$getEmptyPath$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            var tmp$;
+            this.local$iterator = this.local$closure$path.iterator();
+            if (!this.local$iterator.hasNext())
+              throw AssertionError_init('Bad path');
+            this.local$cell = this.local$iterator.next().pos;
+            this.state_0 = 2;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            if (!this.local$iterator.hasNext()) {
+              this.state_0 = 4;
+              continue;
+            }
+            this.local$next = this.local$iterator.next().pos;
+            tmp$ = getRelativePosition(this.local$next, this.local$cell);
+            if (tmp$ == null) {
+              throw AssertionError_init('Bad path');
+            }
+            var dir = tmp$;
+            this.state_0 = 3;
+            this.result_0 = this.local$$receiver.yield_11rb$(new Pair(this.local$next, dir), this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 3:
+            this.local$cell = this.local$next;
+            this.state_0 = 2;
+            continue;
+          case 4:
+            return Unit;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      } catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        } else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function Solver$getEmptyPath$lambda_0(closure$path_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$Solver$getEmptyPath$lambda(closure$path_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  Solver.prototype.getEmptyPath_0 = function (start, end, board) {
+    var path = getPath(board, start, end, Solver$getEmptyPath$lambda);
+    return toList(sequence(Solver$getEmptyPath$lambda_0(path)));
+  };
+  function Solver$Cell(pos, index, lock) {
     if (lock === void 0)
       lock = false;
-    if (mark === void 0)
-      mark = false;
-    if (lastPos === void 0)
-      lastPos = null;
     this.pos = pos;
     this.index = index;
     this.lock = lock;
-    this.mark = mark;
-    this.lastPos = lastPos;
   }
   Solver$Cell.$metadata$ = {
     kind: Kind_CLASS,
@@ -1671,29 +1830,21 @@
   Solver$Cell.prototype.component3 = function () {
     return this.lock;
   };
-  Solver$Cell.prototype.component4 = function () {
-    return this.mark;
-  };
-  Solver$Cell.prototype.component5 = function () {
-    return this.lastPos;
-  };
-  Solver$Cell.prototype.copy_x93g2l$ = function (pos, index, lock, mark, lastPos) {
-    return new Solver$Cell(pos === void 0 ? this.pos : pos, index === void 0 ? this.index : index, lock === void 0 ? this.lock : lock, mark === void 0 ? this.mark : mark, lastPos === void 0 ? this.lastPos : lastPos);
+  Solver$Cell.prototype.copy_hfjfns$ = function (pos, index, lock) {
+    return new Solver$Cell(pos === void 0 ? this.pos : pos, index === void 0 ? this.index : index, lock === void 0 ? this.lock : lock);
   };
   Solver$Cell.prototype.toString = function () {
-    return 'Cell(pos=' + Kotlin.toString(this.pos) + (', index=' + Kotlin.toString(this.index)) + (', lock=' + Kotlin.toString(this.lock)) + (', mark=' + Kotlin.toString(this.mark)) + (', lastPos=' + Kotlin.toString(this.lastPos)) + ')';
+    return 'Cell(pos=' + Kotlin.toString(this.pos) + (', index=' + Kotlin.toString(this.index)) + (', lock=' + Kotlin.toString(this.lock)) + ')';
   };
   Solver$Cell.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.pos) | 0;
     result = result * 31 + Kotlin.hashCode(this.index) | 0;
     result = result * 31 + Kotlin.hashCode(this.lock) | 0;
-    result = result * 31 + Kotlin.hashCode(this.mark) | 0;
-    result = result * 31 + Kotlin.hashCode(this.lastPos) | 0;
     return result;
   };
   Solver$Cell.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.pos, other.pos) && Kotlin.equals(this.index, other.index) && Kotlin.equals(this.lock, other.lock) && Kotlin.equals(this.mark, other.mark) && Kotlin.equals(this.lastPos, other.lastPos)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.pos, other.pos) && Kotlin.equals(this.index, other.index) && Kotlin.equals(this.lock, other.lock)))));
   };
   Solver.$metadata$ = {
     kind: Kind_OBJECT,
@@ -1706,6 +1857,23 @@
       new Solver();
     }return Solver_instance;
   }
+  var map = defineInlineFunction('Games-SlidingGame.map_a5qy59$', wrapFunction(function () {
+    var Array2 = _.$$importsForInline$$['kds-root-kds'].com.soywiz.kds.Array2;
+    var throwCCE = Kotlin.throwCCE;
+    var Array_0 = Array;
+    return function ($receiver, transform) {
+      var width = $receiver.width;
+      var height = $receiver.height;
+      var tmp$;
+      var array = Array_0(Kotlin.imul(width, height));
+      var tmp$_0;
+      tmp$_0 = array.length - 1 | 0;
+      for (var i = 0; i <= tmp$_0; i++) {
+        array[i] = transform($receiver.get_vux9f0$(i % $receiver.width, i / $receiver.width | 0));
+      }
+      return new Array2(width, height, Kotlin.isArray(tmp$ = array) ? tmp$ : throwCCE());
+    };
+  }));
   function clone($receiver) {
     return PointInt.Companion.invoke_vux9f0$($receiver.x, $receiver.y);
   }
@@ -1732,6 +1900,10 @@
     else
       tmp$ = null;
     return tmp$;
+  }
+  function isAdjacent($receiver, to) {
+    var diff = minus(to, $receiver);
+    return abs(diff.x - diff.y | 0) === 1;
   }
   function assert(cond, message) {
     if (message === void 0)
@@ -1789,6 +1961,167 @@
     var inversions = accumulator;
     return get_isOdd($receiver.width) && get_isEven(inversions) || get_isOdd($receiver.height - $receiver.emptyPos.y | 0) ^ get_isOdd(inversions);
   }
+  function PathCell(item, mark, lastPos) {
+    if (mark === void 0)
+      mark = false;
+    if (lastPos === void 0)
+      lastPos = null;
+    this.item = item;
+    this.mark = mark;
+    this.lastPos = lastPos;
+  }
+  PathCell.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PathCell',
+    interfaces: []
+  };
+  PathCell.prototype.component1 = function () {
+    return this.item;
+  };
+  PathCell.prototype.component2 = function () {
+    return this.mark;
+  };
+  PathCell.prototype.component3 = function () {
+    return this.lastPos;
+  };
+  PathCell.prototype.copy_bq51jw$ = function (item, mark, lastPos) {
+    return new PathCell(item === void 0 ? this.item : item, mark === void 0 ? this.mark : mark, lastPos === void 0 ? this.lastPos : lastPos);
+  };
+  PathCell.prototype.toString = function () {
+    return 'PathCell(item=' + Kotlin.toString(this.item) + (', mark=' + Kotlin.toString(this.mark)) + (', lastPos=' + Kotlin.toString(this.lastPos)) + ')';
+  };
+  PathCell.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.item) | 0;
+    result = result * 31 + Kotlin.hashCode(this.mark) | 0;
+    result = result * 31 + Kotlin.hashCode(this.lastPos) | 0;
+    return result;
+  };
+  PathCell.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.item, other.item) && Kotlin.equals(this.mark, other.mark) && Kotlin.equals(this.lastPos, other.lastPos)))));
+  };
+  function Coroutine$getPath$lambda(closure$end_0, closure$start_0, closure$board_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$closure$end = closure$end_0;
+    this.local$closure$start = closure$start_0;
+    this.local$closure$board = closure$board_0;
+    this.local$next = void 0;
+    this.local$nextCell = void 0;
+    this.local$$receiver = $receiver_0;
+  }
+  Coroutine$getPath$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$getPath$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$getPath$lambda.prototype.constructor = Coroutine$getPath$lambda;
+  Coroutine$getPath$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            var tmp$;
+            this.local$next = this.local$closure$end;
+            this.state_0 = 2;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            if (this.local$next != null ? this.local$next.equals(this.local$closure$start) : null) {
+              this.state_0 = 4;
+              continue;
+            }
+            var p = this.local$next;
+            this.local$nextCell = this.local$closure$board.get_vux9f0$(p.x, p.y);
+            this.state_0 = 3;
+            this.result_0 = this.local$$receiver.yield_11rb$(this.local$nextCell.item, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 3:
+            tmp$ = this.local$nextCell.lastPos;
+            if (tmp$ == null) {
+              throw AssertionError_init('Path is not complete');
+            }
+            var lastPos = tmp$;
+            this.local$next = lastPos;
+            this.state_0 = 2;
+            continue;
+          case 4:
+            var $receiver = this.local$closure$board;
+            var p_0 = this.local$closure$start;
+            this.state_0 = 5;
+            this.result_0 = this.local$$receiver.yield_11rb$($receiver.get_vux9f0$(p_0.x, p_0.y).item, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 5:
+            return this.result_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      } catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        } else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function getPath$lambda(closure$end_0, closure$start_0, closure$board_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$getPath$lambda(closure$end_0, closure$start_0, closure$board_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function getPath($receiver, start, end, ignorePredicate) {
+    if (ignorePredicate === void 0)
+      ignorePredicate = null;
+    var tmp$;
+    var width = $receiver.width;
+    var height = $receiver.height;
+    var tmp$_0;
+    var array = Array_0(Kotlin.imul(width, height));
+    var tmp$_0_0;
+    tmp$_0_0 = array.length - 1 | 0;
+    for (var i = 0; i <= tmp$_0_0; i++) {
+      array[i] = new PathCell($receiver.get_vux9f0$(i % $receiver.width, i / $receiver.width | 0));
+    }
+    var board = new Array2(width, height, Kotlin.isArray(tmp$_0 = array) ? tmp$_0 : throwCCE());
+    board.get_vux9f0$(start.x, start.y).mark = true;
+    var queue = new TGenQueue();
+    queue.enqueue_11rb$(start);
+    var pathFound = false;
+    while (!queue.isEmpty() && !pathFound) {
+      var startPos = queue.dequeue();
+      tmp$ = Direction$Companion_getInstance().directions.iterator();
+      while (tmp$.hasNext()) {
+        var dir = tmp$.next();
+        var nextPos = plus(startPos, dir.diff);
+        if (!board.inside_vux9f0$(nextPos.x, nextPos.y)) {
+          continue;
+        }var next = board.get_vux9f0$(nextPos.x, nextPos.y);
+        if (!next.mark && (ignorePredicate != null ? ignorePredicate(next.item) : null) !== true) {
+          next.lastPos = startPos;
+          next.mark = true;
+          queue.enqueue_11rb$(nextPos);
+          if (nextPos != null ? nextPos.equals(end) : null) {
+            pathFound = true;
+            break;
+          }}}
+    }
+    assert(pathFound, 'No path found from ' + start + ' to ' + end);
+    return reversed(toList(sequence(getPath$lambda(end, start, board))));
+  }
   Object.defineProperty(Direction, 'UP', {
     get: Direction$UP_getInstance
   });
@@ -1834,13 +2167,18 @@
   Object.defineProperty(_, 'Solver', {
     get: Solver_getInstance
   });
+  $$importsForInline$$['Games-SlidingGame'] = _;
+  _.map_a5qy59$ = map;
   _.clone_9ozadc$ = clone;
   _.plus_2dhgkl$ = plus;
   _.countTo_dqglrj$ = countTo;
   _.getRelativePosition_ixjqi9$ = getRelativePosition;
+  _.isAdjacent_ixjqi9$ = isAdjacent;
   _.assert_qlx5jl$ = assert;
   _.get_isVertical_ycmc7k$ = get_isVertical;
   _.get_isSolvable_wzskkp$ = get_isSolvable;
+  _.PathCell = PathCell;
+  _.getPath_ybjl68$ = getPath;
   view = new Extra$Property(void 0, view$lambda);
   space = new Extra$Property(void 0, space$lambda);
   main(internal.EmptyContinuation, false);
